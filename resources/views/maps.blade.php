@@ -118,8 +118,8 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-3">
+            <section class="row">
+                <div class="col-12 col-md-3 mb-3">
                     <div class="card">
                         <div class="card-header">
                             <h4>Cari Seller</h4>
@@ -139,21 +139,22 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-9">
+                <div class="col-12 col-md-9 mb-3">
                     <div class="card">
                         <div class="card-header">
                             <h4>Seller pada lokasi Pencarian</h4>
                         </div>
                         <div class="card-body">
-                            <table class="table" id="sellersTable">
-                                <thead>
-                                    <tr>
-                                        <th>Kode Seller</th>
-                                        <th>Nama Seller</th>
-                                        <th>Tanggal Terbaru</th>
-                                        <th>Jumlah di Kejadian</th>
-                                    </tr>
-                                </thead>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered text-nowrap" id="sellersTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Kode Seller</th>
+                                            <th>Nama Seller</th>
+                                            <th>Tanggal Terbaru</th>
+                                            <th>Jumlah di Kejadian</th>
+                                        </tr>
+                                    </thead>
                                 <tbody>
                                     @foreach ($locationSellers as $seller)
                                         <tr>
@@ -168,9 +169,9 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
             <section class="row">
-                <div class="col-3">
+                <div class="col-12 col-md-3 mb-3">
                     <div class="card">
                         <div class="card-header">
                             <h4>Cari Lokasi Seller</h4>
@@ -186,19 +187,20 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-9">
+                <div class="col-12 col-md-9 mb-3">
                     <div class="card">
                         <div class="card-header">
-                            <h4>Lokasi untuk kode <span id="kodeHeader"></span> - <span id="namaHeader"></span></h4>
+                         <h4>Lokasi untuk kode <span id="kodeHeader"></span> - <span id="namaHeader"></span> (<span id="locationCount"></span> Lokasi)</h4>
+                        </div>
                         </div>
                         <div class="card-body">
                             <div id="map" style="height: 500px; width: 100%;"></div>
                         </div>
                     </div>
                 </div>
-
-            </div>
             </section>
+        </div>
+
 
 
         <footer>
@@ -308,6 +310,7 @@
                             // Update the card header with the code and name
                             document.getElementById('kodeHeader').textContent = kode;
                             document.getElementById('namaHeader').textContent = data[0].nama ? data[0].nama : 'Nama tidak ditemukan';
+                            document.getElementById('locationCount').textContent = data.length;
 
                             // Clear existing markers
                             map.eachLayer(function (layer) {
@@ -331,6 +334,7 @@
                         } else {
                             document.getElementById('kodeHeader').textContent = kode;
                             document.getElementById('namaHeader').textContent = 'Data tidak ditemukan';
+                            document.getElementById('locationCount').textContent = '0';
                         }
                     })
                     .catch(error => console.error('Error fetching data:', error));

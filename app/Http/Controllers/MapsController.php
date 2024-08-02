@@ -60,11 +60,6 @@ class MapsController extends Controller
         return response()->json([]);
     }
 
-
-
-
-
-
     public function getLocationsByKode(Request $request)
     {
         $kode = trim($request->input('kode'));

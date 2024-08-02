@@ -114,8 +114,8 @@
             <h3>Top Cross Selling & Longlat</h3>
         </div>
         <div class="page-content">
-           <section class="row">
-                <div class="col-6 ">
+            <section class="row">
+                <div class="col-12 col-md-6 mb-3">
                     <div class="card">
                         <div class="card-header">
                             <h4>Top Seller Cross Selling</h4>
@@ -130,7 +130,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-6 ">
+                <div class="col-12 col-md-6 mb-3">
                     <div class="card">
                         <div class="card-header">
                             <h4>Top Seller pada Longlat</h4>
@@ -148,7 +148,7 @@
             </section>
 
             <section class="row">
-                <div class="col-6">
+                <div class="col-12 col-md-6 mb-3">
                     <div class="card">
                         <div class="card-header">
                             <h4>Perbandingan antara Seller cross selling dan Longlat yang Sama</h4>
@@ -163,7 +163,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-6">
+                <div class="col-12 col-md-6 mb-3">
                     <div class="card">
                         <div class="card-header">
                             <h4>Interaksi Top Pelaku dan Pembeli</h4>
@@ -179,6 +179,7 @@
                     </div>
                 </div>
             </section>
+
             <section class="row">
                 <div class="col-12">
                     <div class="card">
