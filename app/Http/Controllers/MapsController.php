@@ -25,7 +25,7 @@ class MapsController extends Controller
     {
         return Cache::remember('frequent_locations', 60, function () {
             return DB::table('longlat_fix')
-                ->select('longitude', 'latitude', DB::raw('count(*) as total'))
+                ->select('longitude', 'latitude', DB::raw('count(DISTINCT kode) as total'))
                 ->groupBy('longitude', 'latitude')
                 ->orderByDesc('total')
                 ->take(10)
@@ -39,6 +39,7 @@ class MapsController extends Controller
                 });
         });
     }
+
 
 
     public function getLocationSellers(Request $request)
@@ -67,12 +68,13 @@ class MapsController extends Controller
         if ($kode) {
             $locations = DB::table('longlat_fix')
                 ->where('kode', $kode)
-                ->select('longitude', 'latitude', 'tanggal', 'nama', DB::raw('count(*) as count'))
-                ->groupBy('longitude', 'latitude', 'tanggal', 'nama')
+                ->select('longitude', 'latitude', 'nama', DB::raw('count(*) as count'), DB::raw('MAX(tanggal) as tanggal'))
+                ->groupBy('longitude', 'latitude', 'nama')
                 ->get();
 
             return response()->json($locations);
         }
         return response()->json([]);
     }
+
 }

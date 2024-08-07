@@ -102,13 +102,11 @@
                 <i class="bi bi-justify fs-3"></i>
             </a>
         </header>
-
         <div class="page-heading">
             <h2>Maps Cross Selling & Longlat</h2>
         </div>
         <div class="page-content">
             <div class="col-12">
-
                 <div class="card">
                     <div class="card-header">
                         <h5 class="card-title">Lokasi yang paling banyak terjadi</h5>
@@ -199,6 +197,29 @@
                     </div>
                 </div>
             </section>
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h4>Daftar Lokasi <span id="tableKodeHeader"></span> - <span id="tableNamaHeader"></span></h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered text-nowrap" id="locationTable">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Latitude</th>
+                                    <th>Longitude</th>
+                                    <th>Tanggal</th>
+                                    <th>Count</th>
+                                </tr>
+                            </thead>
+                            <tbody id="locationTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
 
@@ -222,7 +243,24 @@
     <script src="assets/static/js/pages/datatables.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            var frequentLocations = @json($frequentLocations);
+            // Define base layers
+            var osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            });
+
+            var esriLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: '© Esri'
+            });
+
+
+
+            // Initialize the map with the OSM layer
+            var map2 = L.map('map2', {
+                center: [-2.5489, 118.0149],
+                zoom: 5,
+                layers: [osmLayer]
+            });
+
             // Define a marker icon
             var blueIcon = new L.Icon({
                 iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
@@ -233,14 +271,8 @@
                 shadowSize: [41, 41]
             });
 
-            // Initialize the second map
-            var map2 = L.map('map2').setView([-2.5489, 118.0149], 5);
-
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors'
-            }).addTo(map2);
-
-            // Add markers to the second map
+            // Add markers
+            var frequentLocations = @json($frequentLocations);
             frequentLocations.forEach(function (location) {
                 var lat = parseFloat(location.latitude);
                 var lng = parseFloat(location.longitude);
@@ -249,7 +281,19 @@
                     marker.bindPopup(`<strong>Jumlah Seller:</strong> ${location.count}<br><strong>Longlat:</strong> ${location.longitude}, ${location.latitude}`);
                 }
             });
+
+            // Add base layer control
+            var baseMaps = {
+                "OSM": osmLayer,
+                "Esri World Imagery": esriLayer,
+
+            };
+
+            L.control.layers(baseMaps).addTo(map2);
         });
+
+
+
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -282,65 +326,90 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            var map = L.map('map').setView([-2.5489, 118.0149], 5);
+        var map = L.map('map').setView([-2.5489, 118.0149], 5);
 
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors'
-            }).addTo(map);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
 
-            var blueIcon = L.icon({
-                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
-                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-                iconSize: [25, 41],
-                iconAnchor: [12, 41],
-                popupAnchor: [1, -34],
-                shadowSize: [41, 41]
-            });
-
-            document.getElementById('codeForm').addEventListener('submit', function(event) {
-                event.preventDefault();
-                var kode = document.getElementById('kode').value.trim();
-
-                fetch(`/api/get-locations-by-kode?kode=${kode}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log(data); // Log the response data
-
-                        if (data.length > 0) {
-                            // Update the card header with the code and name
-                            document.getElementById('kodeHeader').textContent = kode;
-                            document.getElementById('namaHeader').textContent = data[0].nama ? data[0].nama : 'Nama tidak ditemukan';
-                            document.getElementById('locationCount').textContent = data.length;
-
-                            // Clear existing markers
-                            map.eachLayer(function (layer) {
-                                if (!!layer.toGeoJSON) {
-                                    map.removeLayer(layer);
-                                }
-                            });
-                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                                attribution: '© OpenStreetMap contributors'
-                            }).addTo(map);
-
-                            // Add new markers
-                            data.forEach(location => {
-                                var lat = parseFloat(location.latitude);
-                                var lng = parseFloat(location.longitude);
-                                if (!isNaN(lat) && !isNaN(lng)) {
-                                    var marker = L.marker([lat, lng], { icon: blueIcon }).addTo(map);
-                                    marker.bindPopup(`<strong>Location:</strong> ${lat}, ${lng}<br><strong>Date:</strong> ${location.tanggal}<br><strong>Count:</strong> ${location.count}`);
-                                }
-                            });
-                        } else {
-                            document.getElementById('kodeHeader').textContent = kode;
-                            document.getElementById('namaHeader').textContent = 'Data tidak ditemukan';
-                            document.getElementById('locationCount').textContent = '0';
-                        }
-                    })
-                    .catch(error => console.error('Error fetching data:', error));
-            });
+        var blueIcon = L.icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
         });
-        </script>
+
+        document.getElementById('codeForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var kode = document.getElementById('kode').value.trim();
+
+            fetch(`/api/get-locations-by-kode?kode=${kode}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data); // Log the response data
+
+                    if (data.length > 0) {
+                        // Update the card header with the code and name
+                        document.getElementById('kodeHeader').textContent = kode;
+                        document.getElementById('namaHeader').textContent = data[0].nama ? data[0].nama : 'Nama tidak ditemukan';
+                        document.getElementById('locationCount').textContent = data.length;
+
+                        document.getElementById('tableKodeHeader').textContent = kode;
+                        document.getElementById('tableNamaHeader').textContent = data[0].nama ? data[0].nama : 'Nama tidak ditemukan';
+
+                        // Clear existing markers
+                        map.eachLayer(function (layer) {
+                            if (!!layer.toGeoJSON) {
+                                map.removeLayer(layer);
+                            }
+                        });
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            attribution: '© OpenStreetMap contributors'
+                        }).addTo(map);
+
+                        // Clear existing table rows
+                        var tableBody = document.getElementById('locationTableBody');
+                        tableBody.innerHTML = '';
+
+                        // Add new markers and table rows
+                        data.forEach((location, index) => {
+                            var lat = parseFloat(location.latitude);
+                            var lng = parseFloat(location.longitude);
+                            if (!isNaN(lat) && !isNaN(lng)) {
+                                var marker = L.marker([lat, lng], { icon: blueIcon }).addTo(map);
+                                marker.bindPopup(`<strong>Location:</strong> ${lat}, ${lng}<br><strong>Date:</strong> ${location.tanggal}<br><strong>Count:</strong> ${location.count}`);
+
+                                // Add row to the table
+                                var row = document.createElement('tr');
+                                row.innerHTML = `
+                                    <td>${index + 1}</td>
+                                    <td>${lat}</td>
+                                    <td>${lng}</td>
+                                    <td>${location.tanggal}</td>
+                                    <td>${location.count}</td>
+                                `;
+                                tableBody.appendChild(row);
+                            }
+                        });
+
+                        // Initialize DataTable
+                        $('#locationTable').DataTable();
+                    } else {
+                        document.getElementById('kodeHeader').textContent = kode;
+                        document.getElementById('namaHeader').textContent = 'Data tidak ditemukan';
+                        document.getElementById('locationCount').textContent = '0';
+                        document.getElementById('tableKodeHeader').textContent = kode;
+                        document.getElementById('tableNamaHeader').textContent = 'Data tidak ditemukan';
+                        document.getElementById('locationTableBody').innerHTML = '';
+                    }
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        });
+    });
+
+    </script>
 
 
 

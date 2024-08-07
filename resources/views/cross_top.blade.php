@@ -12,6 +12,9 @@
     <link rel="stylesheet" crossorigin href="./assets/compiled/css/iconly.css">
     <link rel="stylesheet" href="assets/extensions/datatables.net-bs5/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" crossorigin href="./assets/compiled/css/table-datatable-jquery.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" rel="stylesheet">
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
@@ -148,22 +151,8 @@
             </section>
 
             <section class="row">
-                <div class="col-12 col-md-6 mb-3">
-                    <div class="card">
-                        <div class="card-header">
-                            <h4>Perbandingan antara Seller cross selling dan Longlat yang Sama</h4>
-                        </div>
-                        <div class="card-body">
-                            <div class="d-flex justify-content-end mb-3">
-                                <button id="exportTopSellersLonglatChartSVG" class="btn btn-primary me-2">Export SVG</button>
-                                <button id="exportTopSellersLonglatChartPNG" class="btn btn-success me-2">Export PNG</button>
-                                <button id="exportTopSellersLonglatChartExcel" class="btn btn-warning">Export Excel</button>
-                            </div>
-                            <canvas id="topSellersLonglatChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-md-6 mb-3">
+
+                <div class="col-12 col-md-8 mb-5">
                     <div class="card">
                         <div class="card-header">
                             <h4>Interaksi Top Pelaku dan Pembeli</h4>
@@ -200,7 +189,7 @@
                                             <th>Nama Pembeli</th>
                                             <th>Tanggal</th>
                                             <th>Longlat</th>
-                                            <th>Jumlah Kejadian</th>
+                                            <th>Jumlah Kejadian Aktivasi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -223,6 +212,68 @@
 
                 </div>
             </section>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Top seller total selama 3 Bulan </h4>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="summaryChart" width="600" height="400"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Data seller Cross Selling dan Longlat Kejadian</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-start mb-3">
+                            <button id="exportSummaryExcel" class="btn btn-danger">Export Excel</button>
+                        </div>
+                        <form method="GET" action="{{ route('cross-selling') }}">
+                            <div class="form-group">
+                                <label for="start_date">Start Date</label>
+                                <input type="text" class="form-control datepicker" id="start_date" name="start_date" placeholder="Start Date">
+                            </div>
+                            <div class="form-group">
+                                <label for="end_date">End Date</label>
+                                <input type="text" class="form-control datepicker" id="end_date" name="end_date" placeholder="End Date">
+                            </div>
+                            <div class="d-flex justify-content-end mb-3">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                        </form>
+
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="table1">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nama</th>
+                                        <th>Tanggal</th>
+                                        <th>Cross Selling Penjualan</th>
+                                        <th>Cross Selling Pembelian</th>
+                                        <th>Kejadian Longlat</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($detailid as $summary)
+                                        <tr>
+                                            <td>{{ $summary['id'] }}</td>
+                                            <td>{{ $summary['nama'] }}</td>
+                                            <td>{{ $summary['tanggal'] }}</td>
+                                            <td>{{ $summary['cross_selling_penjualan'] }}</td>
+                                            <td>{{ $summary['cross_selling_pembelian'] }}</td>
+                                            <td>{{ $summary['kejadian_longlat'] }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
         </div>
 
@@ -239,14 +290,13 @@
     <script src="assets/static/js/components/dark.js"></script>
     <script src="assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>
     <script src="assets/compiled/js/app.js"></script>
-
-
-
-    <!-- Need: Apexcharts -->
     <script src="assets/extensions/apexcharts/apexcharts.min.js"></script>
     <script src="assets/static/js/pages/dashboard.js"></script>
     <script src="assets/static/js/pages/ui-apexchart.js"></script>
     <script src="assets/extensions/jquery/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <script src="assets/extensions/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="assets/extensions/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
     <script src="assets/static/js/pages/datatables.js"></script>
@@ -262,7 +312,7 @@
         var activityData = Object.values(activitySummary);
         var crossNames = {};
 
-        // Membuat dictionary untuk kode -> nama
+
         fullcrossdata.forEach(function(item) {
             crossNames[item.id_owner] = item.nama_owner;
         });
@@ -356,7 +406,7 @@
     var locationData = Object.values(locationSummary);
     var locationNames = {};
 
-    // Membuat dictionary untuk kode -> nama
+
     fullLocationData.forEach(function(item) {
         locationNames[item.kode] = item.nama;
     });
@@ -440,81 +490,6 @@
     console.error('Element with id "locationChart" not found');
 }
 
-
-
-    // Top persamaan
-    var ctxTopSellersLonglat = document.getElementById('topSellersLonglatChart');
-    if (ctxTopSellersLonglat) {
-        var topSellersLonglat = {!! json_encode($commonSellersCount) !!};
-        var longlatLabels = Object.keys(topSellersLonglat);
-        var longlatData = Object.values(topSellersLonglat);
-
-        var longlatChart = new Chart(ctxTopSellersLonglat.getContext('2d'), {
-            type: 'bar',
-            data: {
-                labels: longlatLabels,
-                datasets: [{
-                    label: 'Jumlah yang Sama',
-                    data: longlatData,
-                    backgroundColor: '#FFCE56',
-                    borderColor: '#FFCE56',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                },
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Pelaku (ID Seller)'
-                        }
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Jumlah yang Sama'
-                        },
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-
-        document.getElementById('exportTopSellersLonglatChartSVG').addEventListener('click', function() {
-            var svgUrl = ctxTopSellersLonglat.toDataURL("image/svg+xml");
-            var downloadLink = document.createElement('a');
-            downloadLink.href = svgUrl;
-            downloadLink.download = 'top_sellers_longlat_chart.svg';
-            downloadLink.click();
-        });
-
-        document.getElementById('exportTopSellersLonglatChartPNG').addEventListener('click', function() {
-            var pngUrl = ctxTopSellersLonglat.toDataURL("image/png");
-            var downloadLink = document.createElement('a');
-            downloadLink.href = pngUrl;
-            downloadLink.download = 'top_sellers_longlat_chart.png';
-            downloadLink.click();
-        });
-
-        document.getElementById('exportTopSellersLonglatChartExcel').addEventListener('click', function() {
-            var worksheet = XLSX.utils.aoa_to_sheet([
-                ['Pelaku (ID Seller)', 'Jumlah yang Sama'],
-                ...longlatLabels.map((label, index) => [label, longlatData[index]])
-            ]);
-            var workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, 'Top Sellers Longlat Chart');
-            XLSX.writeFile(workbook, 'top_sellers_longlat_chart.xlsx');
-        });
-    } else {
-        console.error('Element with id "topSellersLonglatChart" not found');
-    }
-
     // Key Interactions Chart
     var ctxKeyInteractions = document.getElementById('keyInteractionsChart');
     if (ctxKeyInteractions) {
@@ -522,7 +497,7 @@
         var interactionLabels = Object.keys(keyInteractions).map(key => key.split(' & ').slice(0, 2).join(' & ')); // Exclude date for chart labels
         var interactionData = Object.values(keyInteractions);
 
-        // Limit to top 10 interactions for chart display
+
         var limitedLabels = interactionLabels.slice(0, 10);
         var limitedData = interactionData.slice(0, 10);
 
@@ -635,12 +610,98 @@
             XLSX.writeFile(workbook, 'tabel_interactions.xlsx');
         });
         </script>
+        <script>
+            document.getElementById('exportSummaryExcel').addEventListener('click', function() {
+        var summaryData = {!! json_encode($detailid) !!};
+        var worksheetData = [
+            ['ID', 'Nama', 'Bulan', 'Cross Selling Penjualan', 'Cross Selling Pembelian', 'Kejadian Longlat']
+        ];
 
+        summaryData.forEach((summary) => {
+            worksheetData.push([
+                summary.id,
+                summary.nama,
+                summary.bulan,
+                summary.cross_selling_penjualan,
+                summary.cross_selling_pembelian,
+                summary.kejadian_longlat
+            ]);
+        });
 
+        var worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+        var workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Summary Data');
+        XLSX.writeFile(workbook, 'summary_data.xlsx');
+    });
+        </script>
+        <script>
+        document.addEventListener('DOMContentLoaded', function () {
 
+            var threeMonthsData = {!! json_encode($threeMonthsData) !!};
+            if (!Array.isArray(threeMonthsData)) {
+                console.error('Data tidak valid:', threeMonthsData);
+                return;
+            }
 
+            var labels = threeMonthsData.map(item => item.nama);
+            var totalPenjualanData = threeMonthsData.map(item => item.total_penjualan);
+            var totalPembelianData = threeMonthsData.map(item => item.total_pembelian);
+            var totalLonglatData = threeMonthsData.map(item => item.total_longlat);
 
-
+            var ctx = document.getElementById('summaryChart');
+            if (ctx) {
+                var summaryChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Total Penjualan',
+                                data: totalPenjualanData,
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Total Pembelian',
+                                data: totalPembelianData,
+                                backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                                borderColor: 'rgba(153, 102, 255, 1)',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Total Longlat',
+                                data: totalLonglatData,
+                                backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                                borderColor: 'rgba(255, 159, 64, 1)',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            } else {
+                console.error('Element canvas dengan id summaryChart tidak ditemukan');
+            }
+        });
+    </script>
+    <script>
+        $(document).ready(function(){
+            $('.datepicker').datepicker({
+                format: 'yyyy-mm-dd',
+                autoclose: true,
+                todayHighlight: true
+            });
+        });
+    </script>
 </body>
 
 </html>
